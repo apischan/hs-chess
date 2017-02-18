@@ -58,7 +58,7 @@ initialBoard = [[blackCastle, blackKnight, blackBishop, blackQueen, blackKing, b
 printBoard :: Board -> IO ()
 printBoard xxs = mapM_ printLine butyBoard
     where printLine xs = putStrLn ("|" ++ (intercalate "|" (map toString xs)) ++ "|")
-          zipLists arr1 arr2 = helper arr1 arr2 []
+          zipLists board placeholder = helper board placeholder []
               where
                   helper (x:xs) (y:ys) accum = helper xs ys (accum ++ [y] ++ [x])
                   helper [] (y:[]) accum = accum ++ [y]
