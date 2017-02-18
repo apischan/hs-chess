@@ -2,6 +2,7 @@ module Chess where
 
 import Data.List
 import Data.String.ToString
+import Data.Sequence hiding (replicate)
 
 data ChessmanType = Pawn 
                   | Bishop
@@ -9,21 +10,19 @@ data ChessmanType = Pawn
                   | Castle
                   | Queen
                   | King
-                  | Free
-                  | Line
 
-data Chessman = Chessman {
-  chessmanType :: ChessmanType,
-  symbol       :: String
-}
+data Placeholder = Free
+                 | Line
 
-instance Show Chessman where
-    show = symbol
+data CellPlaceholder = SpecialPlaceholder { placeholder :: Placeholder,
+                                            symbol      :: String}
+                     | Chessman { chessmanType :: ChessmanType,
+                                  symbol       :: String }
 
-instance ToString Chessman where
+instance ToString CellPlaceholder where
     toString = symbol
 
-type Board = [[Chessman]]
+type Board = [[CellPlaceholder]]
 
 blackPawn = Chessman Pawn "♟ "
 whitePawn = Chessman Pawn "♙ "
@@ -43,14 +42,11 @@ whiteQueen = Chessman Queen "♕ "
 blackKing = Chessman King "♚ "
 whiteKing = Chessman King "♔ "
 
-emptyCell = Chessman Free "  "
+emptyCell = SpecialPlaceholder Free "  "
+linePlaceholder = SpecialPlaceholder Line "--"
 
-lineString = replicate 8 $ Chessman Line "--"
+lineString = replicate 8 $ linePlaceholder
 butyLines = replicate 7 lineString
-
---zipLists arr1 arr2 = helper arr1 arr2 [] where
---  helper (x:xs) (y:ys) accum = helper xs ys (accum ++ [y] ++ [x])
---  helper [] (y:[]) accum = accum ++ [y]
 
 initialBoard = [[blackCastle, blackKnight, blackBishop, blackQueen, blackKing, blackBishop, blackKnight, blackCastle],
     replicate 8 blackPawn,
@@ -58,8 +54,6 @@ initialBoard = [[blackCastle, blackKnight, blackBishop, blackQueen, blackKing, b
     replicate 8 emptyCell,
     replicate 8 whitePawn,
     [whiteCastle, whiteKnight, whiteBishop, whiteQueen, whiteKing, whiteBishop, whiteKnight, whiteCastle]]
-
-
 
 printBoard :: Board -> IO ()
 printBoard xxs = mapM_ printLine butyBoard
